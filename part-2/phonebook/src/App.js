@@ -1,8 +1,18 @@
 import React, { useState } from "react";
 function App() {
-    const [persons, setPersons] = useState([{ name: "Muzamil Khan" }]);
+    const [persons, setPersons] = useState([
+        { name: "Arto Hellas", number: "040-123456" },
+        { name: "Ada Lovelace", number: "39-44-5323523" },
+        { name: "Dan Abramov", number: "12-43-234345" },
+        { name: "Mary Poppendieck", number: "39-23-6423122" },
+    ]);
     const [newName, setnewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
+    const [newFilter, setNewFilter] = useState("");
+
+    const handleFilterChange = (event) => {
+        setNewFilter(event.target.value);
+    };
 
     const handleNameChange = (event) => {
         setnewName(event.target.value);
@@ -30,29 +40,44 @@ function App() {
         setNewNumber("");
     };
 
+    const personsToShow = newFilter
+        ? persons.filter((person) =>
+              person.name.toLowerCase().includes(newFilter.toLowerCase())
+          )
+        : persons;
+
     return (
         <div>
             <h2>Phonebook</h2>
+            <div>
+                filter shown with
+                <input
+                    type="text"
+                    value={newFilter}
+                    onChange={handleFilterChange}
+                />
+            </div>
+            <h2>add a new</h2>
             <form onSubmit={addPerson}>
-                <p>
+                <div>
                     name:
                     <input
                         type="text"
                         value={newName}
                         onChange={handleNameChange}
                     />
-                </p>
-                <p>
+                </div>
+                <div>
                     number:
                     <input
                         type="text"
                         value={newNumber}
                         onChange={handleNumberChange}
                     />
-                </p>
+                </div>
                 <button type="submit">add</button>
                 <h2>Numbers</h2>
-                {persons.map((person, i) => (
+                {personsToShow.map((person, i) => (
                     <p key={i}>
                         {person.name} {person.number}{" "}
                     </p>
