@@ -5,12 +5,12 @@ import Countries from "./Countries";
 function App() {
     const [countries, setCountries] = useState([]);
     const [filter, setFilter] = useState("");
+
     useEffect(() => {
         axios
             .get("https://restcountries.eu/rest/v2/all")
             .then((response) => setCountries(response.data));
     }, []);
-
     const handleShowBtn = (event) => {
         setFilter(event.target.name);
     };
