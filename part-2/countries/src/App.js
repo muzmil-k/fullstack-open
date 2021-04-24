@@ -11,9 +11,17 @@ function App() {
             .then((response) => setCountries(response.data));
     }, []);
 
+    const handleShowBtn = (event) => {
+        setFilter(event.target.name);
+    };
+
     //data to show
     const countriesToShow = filter ? (
-        <Countries countries={countries} filter={filter} />
+        <Countries
+            countries={countries}
+            filter={filter}
+            handleShowBtn={handleShowBtn}
+        />
     ) : null;
 
     return (

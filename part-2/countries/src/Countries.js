@@ -1,9 +1,11 @@
+import React from "react";
 import Country from "./Country";
 
-const Countries = ({ countries, filter }) => {
+const Countries = ({ countries, filter, handleShowBtn }) => {
     const filteredCountries = countries.filter((country) =>
         country.name.toLowerCase().includes(filter.toLowerCase())
     );
+
     //display data
 
     return filteredCountries.length === 0 ? (
@@ -13,10 +15,15 @@ const Countries = ({ countries, filter }) => {
     ) : filteredCountries.length === 1 ? (
         <Country country={filteredCountries[0]} />
     ) : (
-        filteredCountries.map((country) => (
-            <div key={country.cioc}>{country.name}</div>
+        filteredCountries.map((country, i) => (
+            <div key={country.cioc}>
+                {country.name}{" "}
+                <button name={country.name} onClick={handleShowBtn}>
+                    {" "}
+                    show
+                </button>
+            </div>
         ))
     );
 };
-
 export default Countries;
