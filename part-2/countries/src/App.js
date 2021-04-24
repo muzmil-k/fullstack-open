@@ -1,8 +1,32 @@
-import logo from "./logo.svg";
-import "./App.css";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import Countries from "./Countries";
 
 function App() {
-    return <div></div>;
+    const [countries, setCountries] = useState([]);
+    const [filter, setFilter] = useState("");
+    useEffect(() => {
+        axios
+            .get("https://restcountries.eu/rest/v2/all")
+            .then((response) => setCountries(response.data));
+    }, []);
+
+    //data to show
+    const countriesToShow = filter ? (
+        <Countries countries={countries} filter={filter} />
+    ) : null;
+
+    return (
+        <div>
+            find countries:
+            <input
+                type="text"
+                value={filter}
+                onChange={(event) => setFilter(event.target.value)}
+            />
+            {countriesToShow}
+        </div>
+    );
 }
 
 export default App;
