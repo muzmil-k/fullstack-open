@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
-import Persons from "./components/Persons";
+import Person from "./components/Person";
 import personsService from "./services/persons";
 
 function App() {
@@ -50,6 +50,14 @@ function App() {
         setNewNumber("");
     };
 
+    const removePerson = (id) => {
+        const person = persons.find((person) => person.id === id);
+        if (window.confirm(`Delete ${person.name} ?`)) {
+            personsService.remove(id);
+            setPersons(persons.filter((person) => person.id !== id));
+        } else return true;
+    };
+
     const personsToShow = newFilter
         ? persons.filter((person) =>
               person.name.toLowerCase().includes(newFilter.toLowerCase())
@@ -69,7 +77,15 @@ function App() {
                 number={newNumber}
             />
             <h2>Numbers</h2>
-            <Persons persons={personsToShow} />
+            <div>
+                {personsToShow.map((person) => (
+                    <Person
+                        key={person.id}
+                        person={person}
+                        removePerson={() => removePerson(person.id)}
+                    />
+                ))}
+            </div>
         </div>
     );
 }
