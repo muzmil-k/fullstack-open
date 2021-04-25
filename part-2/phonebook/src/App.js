@@ -39,7 +39,9 @@ function App() {
                 name: newName,
                 number: newNumber,
             };
-            setPersons(persons.concat(personObj));
+            axios
+                .post("http://localhost:3001/persons", personObj)
+                .then((response) => setPersons(persons.concat(response.data)));
         }
 
         setnewName("");
