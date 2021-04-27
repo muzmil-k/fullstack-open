@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Person from "./components/Person";
+import Notification from "./components/Notification";
 import personsService from "./services/persons";
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
     const [newName, setnewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [newFilter, setNewFilter] = useState("");
+    const [successMessage, setSuccessMessage] = useState(null);
 
     useEffect(() => {
         personsService
@@ -41,17 +43,20 @@ function App() {
                 ) {
                     const personObj = { ...personFound, number: newNumber };
 
-                    personsService
-                        .update(personFound.id, personObj)
-                        .then((returnedPerson) =>
+                    personsService.update(personFound.id, personObj).then(
+                        (returnedPerson) =>
                             setPersons(
                                 persons.map((person) =>
                                     person.id === personFound.id
                                         ? returnedPerson
                                         : person
                                 )
-                            )
-                        );
+                            ),
+                        setSuccessMessage(`Updated ${personObj.name}`),
+                        setTimeout(() => {
+                            setSuccessMessage(null);
+                        }, 5000)
+                    );
                 } else return true;
             } else alert(`${newName} is already added to phonebook`);
         } else {
@@ -59,11 +64,13 @@ function App() {
                 name: newName,
                 number: newNumber,
             };
-            personsService
-                .create(personObj)
-                .then((returnedPerson) =>
-                    setPersons(persons.concat(returnedPerson))
-                );
+            personsService.create(personObj).then(
+                (returnedPerson) => setPersons(persons.concat(returnedPerson)),
+                setSuccessMessage(`Added ${personObj.name}`),
+                setTimeout(() => {
+                    setSuccessMessage(null);
+                }, 5000)
+            );
         }
 
         setnewName("");
@@ -87,6 +94,7 @@ function App() {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={successMessage} />
             <Filter value={newFilter} handleChange={handleFilterChange} />
             <h2>add a new</h2>
             <PersonForm
