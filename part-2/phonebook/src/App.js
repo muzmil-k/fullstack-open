@@ -10,7 +10,8 @@ function App() {
     const [newName, setnewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [newFilter, setNewFilter] = useState("");
-    const [successMessage, setSuccessMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState();
+    const [successMessage, setSuccessMessage] = useState();
 
     useEffect(() => {
         personsService
@@ -43,20 +44,29 @@ function App() {
                 ) {
                     const personObj = { ...personFound, number: newNumber };
 
-                    personsService.update(personFound.id, personObj).then(
-                        (returnedPerson) =>
+                    personsService
+                        .update(personFound.id, personObj)
+                        .then((returnedPerson) => {
                             setPersons(
                                 persons.map((person) =>
                                     person.id === personFound.id
                                         ? returnedPerson
                                         : person
                                 )
-                            ),
-                        setSuccessMessage(`Updated ${personObj.name}`),
-                        setTimeout(() => {
-                            setSuccessMessage(null);
-                        }, 5000)
-                    );
+                            );
+                            setSuccessMessage(`Updated ${personObj.name}`);
+                            setTimeout(() => {
+                                setSuccessMessage();
+                            }, 5000);
+                        })
+                        .catch((error) => {
+                            setErrorMessage(
+                                `Information of '${personObj.name}' has already been removed from server`
+                            );
+                            setTimeout(() => {
+                                setErrorMessage();
+                            }, 5000);
+                        });
                 } else return true;
             } else alert(`${newName} is already added to phonebook`);
         } else {
@@ -68,7 +78,7 @@ function App() {
                 (returnedPerson) => setPersons(persons.concat(returnedPerson)),
                 setSuccessMessage(`Added ${personObj.name}`),
                 setTimeout(() => {
-                    setSuccessMessage(null);
+                    setSuccessMessage();
                 }, 5000)
             );
         }
@@ -94,7 +104,10 @@ function App() {
     return (
         <div>
             <h2>Phonebook</h2>
-            <Notification message={successMessage} />
+            <Notification
+                successMessage={successMessage}
+                errorMessage={errorMessage}
+            />
             <Filter value={newFilter} handleChange={handleFilterChange} />
             <h2>add a new</h2>
             <PersonForm
